@@ -21,13 +21,13 @@ class ScaleneMapFile:
         self._buf = bytearray(ScaleneMapFile.MAX_BUFSIZE)
         #   file to communicate samples (+ PID)
         self._signal_filename = Filename(
-            f"/tmp/scalene-{name}-signal{os.getpid()}"
+            f"/tmp/scalene-{name}-signal{os.getpid()}-{os.getlogin()}"
         )
         self._lock_filename = Filename(
-            f"/tmp/scalene-{name}-lock{os.getpid()}"
+            f"/tmp/scalene-{name}-lock{os.getpid()}-{os.getlogin()}"
         )
         self._init_filename = Filename(
-            f"/tmp/scalene-{name}-init{os.getpid()}"
+            f"/tmp/scalene-{name}-init{os.getpid()}-{os.getlogin()}"
         )
         self._signal_position = 0
         self._lastpos = bytearray(8)
