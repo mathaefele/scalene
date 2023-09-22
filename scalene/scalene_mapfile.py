@@ -1,6 +1,7 @@
 import mmap
 import os
 import sys
+import socket
 from typing import Any, NewType, TextIO
 
 if sys.platform != "win32":
@@ -20,14 +21,15 @@ class ScaleneMapFile:
         self._name = name
         self._buf = bytearray(ScaleneMapFile.MAX_BUFSIZE)
         #   file to communicate samples (+ PID)
+        no_clash_hash = str(hash(os.getlogin() + socket.gethostname()))
         self._signal_filename = Filename(
-            f"/tmp/scalene-{name}-signal{os.getpid()}-{os.getlogin()}"
+            f"/tmp/scalene-{name}-signal{os.getpid()}-{no_clash_hash}"
         )
         self._lock_filename = Filename(
-            f"/tmp/scalene-{name}-lock{os.getpid()}-{os.getlogin()}"
+            f"/tmp/scalene-{name}-lock{os.getpid()}-{no_clash_hash}"
         )
         self._init_filename = Filename(
-            f"/tmp/scalene-{name}-init{os.getpid()}-{os.getlogin()}"
+            f"/tmp/scalene-{name}-init{os.getpid()}-{no_clash_hash}"
         )
         self._signal_position = 0
         self._lastpos = bytearray(8)
