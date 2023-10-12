@@ -1,7 +1,7 @@
 import mmap
 import os
-import sys
 import socket
+import sys
 from typing import Any, NewType, TextIO
 
 if sys.platform != "win32":
@@ -21,7 +21,7 @@ class ScaleneMapFile:
         self._name = name
         self._buf = bytearray(ScaleneMapFile.MAX_BUFSIZE)
         #   file to communicate samples (+ PID)
-        no_clash_hash = str(hash(os.getlogin() + socket.gethostname()))
+        no_clash_hash = str(os.getuid())
         self._signal_filename = Filename(
             f"/tmp/scalene-{name}-signal{os.getpid()}-{no_clash_hash}"
         )

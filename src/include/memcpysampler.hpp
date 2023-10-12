@@ -175,12 +175,13 @@ class MemcpySampler {
   static constexpr auto flags =
       O_WRONLY | O_CREAT | O_SYNC | O_APPEND;  // O_TRUNC;
   static constexpr auto perms = S_IRUSR | S_IWUSR;
-  static constexpr auto fname = "/tmp/scalene-memcpy-signal%d";
+  static constexpr auto fname = "/tmp/scalene-memcpy-signal%d-%d";
 
  public:
   MemcpySampler()
-      : _samplefile("/tmp/scalene-memcpy-signal%d",
-                    "/tmp/scalene-memcpy-lock%d", "/tmp/scalene-memcpy-init%d"),
+      : _samplefile("/tmp/scalene-memcpy-signal%d-%d",
+                    "/tmp/scalene-memcpy-lock%d-%d",
+                    "/tmp/scalene-memcpy-init%d-%d"),
         _interval(MemcpySamplingRateBytes),
         _memcpyOps(0),
         _memcpyTriggered(0) {
@@ -190,8 +191,9 @@ class MemcpySampler {
     if (old_sig != SIG_DFL) signal(MemcpySignal, old_sig);
     init_lock.unlock();
     auto pid = getpid();
+    auto uid = getuid();
     snprintf_((char *)scalene_memcpy_signal_filename,
-              sizeof(scalene_memcpy_signal_filename), fname, pid);
+              sizeof(scalene_memcpy_signal_filename), fname, pid, uid);
     // printf("initialized (%s)\n", scalene_memcpy_signal_filename);
   }
 

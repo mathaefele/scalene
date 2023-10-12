@@ -41,20 +41,10 @@ import webbrowser
 from collections import defaultdict
 from importlib.abc import SourceLoader
 from importlib.machinery import ModuleSpec
-from jinja2 import Environment, FileSystemLoader
 from types import CodeType, FrameType
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Set,
-    Tuple,
-    Type,
-    Union,
-    cast,
-)
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union, cast
+
+from jinja2 import Environment, FileSystemLoader
 
 from scalene.scalene_arguments import ScaleneArguments
 from scalene.scalene_client_timer import ScaleneClientTimer
@@ -71,7 +61,7 @@ from scalene.scalene_statistics import (
     LineNumber,
     ScaleneStatistics,
 )
-from scalene.scalene_version import scalene_version, scalene_date
+from scalene.scalene_version import scalene_date, scalene_version
 
 if sys.platform != "win32":
     import resource
@@ -740,17 +730,17 @@ class Scalene:
             if arguments.memory:
                 print(f"Scalene warning: Memory profiling is not currently supported for Windows.")
                 arguments.memory = False
-                
+
         # Initialize the malloc related files; if for whatever reason
         # the files don't exist and we are supposed to be profiling
         # memory, exit.
         try:
             Scalene.__malloc_mapfile = ScaleneMapFile("malloc")
             Scalene.__memcpy_mapfile = ScaleneMapFile("memcpy")
-        except Exception:
+        except Exception as e:
             # Ignore if we aren't profiling memory; otherwise, exit.
             if arguments.memory:
-                sys.exit(1)
+                sys.exit(2)
 
         Scalene.__signals.set_timer_signals(arguments.use_virtual_time)
         Scalene.__profiler_base = str(os.path.dirname(__file__))
@@ -1713,7 +1703,7 @@ class Scalene:
                 "in https://github.com/plasma-umass/scalene#using-scalene\n"
                 "(The most likely issue is that you need to run your code with `scalene`, not `python`)."
             )
-            sys.exit(1)
+            sys.exit(3)
         Scalene.__stats.start_clock()
         Scalene.enable_signals()
         Scalene.__start_time = time.monotonic_ns()
@@ -2008,7 +1998,7 @@ class Scalene:
                 "ERROR: Do not try to manually invoke `run_profiler`.\n"
                 "To invoke Scalene programmatically, see the usage noted in https://github.com/plasma-umass/scalene#using-scalene"
             )
-            sys.exit(1)
+            sys.exit(4)
         if sys.platform != "win32":
             Scalene.__orig_signal(
                 Scalene.__signals.start_profiling_signal,
@@ -2090,7 +2080,7 @@ class Scalene:
                         )
                     except SyntaxError:
                         traceback.print_exc()
-                        sys.exit(1)
+                        sys.exit(5)
                     # Push the program's path.
                     program_path = Filename(os.path.dirname(prog_name))
                     if not module:
@@ -2157,7 +2147,7 @@ class Scalene:
                     print(f"Scalene: could not find input file {prog_name}")
                 else:
                     print("Scalene: no input file specified.")
-                sys.exit(1)
+                sys.exit(6)
         except SystemExit as e:
             exit_status = e.code
 
@@ -2165,7 +2155,7 @@ class Scalene:
             pass
         except Exception:
             print("Scalene failed to initialize.\n" + traceback.format_exc())
-            sys.exit(1)
+            sys.exit(7)
         finally:
             with contextlib.suppress(Exception):
                 Scalene.__malloc_mapfile.close()

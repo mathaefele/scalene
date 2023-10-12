@@ -32,9 +32,9 @@
 #include "thresholdsampler.hpp"
 
 static SampleFile& getSampleFile() {
-  static SampleFile mallocSampleFile("/tmp/scalene-malloc-signal%d",
-                                     "/tmp/scalene-malloc-lock%d",
-                                     "/tmp/scalene-malloc-init%d");
+  static SampleFile mallocSampleFile("/tmp/scalene-malloc-signal%d-%d",
+                                     "/tmp/scalene-malloc-lock%d-%d",
+                                     "/tmp/scalene-malloc-init%d-%d");
 
   return mallocSampleFile;
 }

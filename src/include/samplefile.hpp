@@ -35,9 +35,10 @@ class SampleFile {
   SampleFile(const char *filename_template, const char *lockfilename_template,
              const char *init_template) {
     static uint base_pid = getpid();
-    snprintf(_init_filename, PATH_MAX - 1, init_template, base_pid);
-    snprintf(_signalfile, PATH_MAX - 1, filename_template, base_pid);
-    snprintf(_lockfile, PATH_MAX - 1, lockfilename_template, base_pid);
+    static uint user_id = getuid();
+    snprintf(_init_filename, PATH_MAX - 1, init_template, base_pid, user_id);
+    snprintf(_signalfile, PATH_MAX - 1, filename_template, base_pid, user_id);
+    snprintf(_lockfile, PATH_MAX - 1, lockfilename_template, base_pid, user_id);
     int signal_fd = open(_signalfile, flags, perms);
     int lock_fd = open(_lockfile, flags, perms);
     if ((signal_fd == -1) || (lock_fd == -1)) {
