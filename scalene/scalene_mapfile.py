@@ -62,8 +62,14 @@ class ScaleneMapFile:
     def cleanup(self) -> None:
         """Remove all map files."""
         try:
-            os.remove(self._init_filename)
-            os.remove(self._signal_filename)
+            pid = os.getpid()
+            for i in range(30):
+                fname = self._init_filename.replace(str(pid), str(pid+i))
+                if (os.path.isfile(fname)):
+                    os.remove(fname)
+                fname = self._signal_filename.replace(str(pid), str(pid+i))
+                if (os.path.isfile(fname)):
+                    os.remove(fname)
         except FileNotFoundError:
             pass
 

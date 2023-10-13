@@ -13,7 +13,6 @@
     usage help: scalene --help
 
 """
-
 import argparse
 import atexit
 import builtins
@@ -29,6 +28,7 @@ import os
 import pathlib
 import platform
 import re
+import shutil
 import signal
 import stat
 import sys
@@ -1823,9 +1823,16 @@ class Scalene:
         # Delete the temporary directory.
         with contextlib.suppress(Exception):
             if not Scalene.__pid:
-                Scalene.__python_alias_dir.cleanup()  # type: ignore
+                #Scalene.__python_alias_dir.cleanup()  # type: ignore
+                shutil.rmtree(Scalene.__python_alias_dir)
         with contextlib.suppress(Exception):
-            os.remove(f"/tmp/scalene-malloc-lock{os.getpid()}")
+            for i in range(30):
+                fname = f"/tmp/scalene-malloc-lock{os.getpid()+i}-{os.getuid()}"
+                if (os.path.isfile(fname)):
+                    os.remove(fname)
+                fname = f"/tmp/scalene-memcpy-lock{os.getpid()+i}-{os.getuid()}"
+                if (os.path.isfile(fname)):
+                    os.remove(fname)
 
     @staticmethod
     def generate_html(profile_fname: Filename, output_fname: Filename) -> None:
